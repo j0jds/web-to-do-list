@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Tarefa</title>
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Cadastro de Tarefa</h2>
+        <form>
+            <input type="text" id="nome" placeholder="Nome da Tarefa" required>
+            <select id="prioridade" required>
+                <option value="" disabled selected>Prioridade</option>
+                <option value="baixa">Baixa</option>
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+            </select>
+            <label for="finalizada">
+                <input type="checkbox" id="finalizada"> Finalizada
+            </label>
+            <textarea id="descricao" placeholder="Descrição da Tarefa"></textarea>
+            <button type="submit">Salvar Tarefa</button>
+        </form>
+        <a href="home.html" class="btn-voltar">Home</a>
+    </div>
+</body>
+</html>
