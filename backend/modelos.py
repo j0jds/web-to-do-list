@@ -1,44 +1,31 @@
-from datetime import datetime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 
-Base = declarative_base()   
+db = SQLAlchemy()
 
-class Membro(Base):
+class Membro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    nome = db.Column(db.String(50), nullable=False)
+    senha = db.Column(db.String(50), nullable=False)
 
-    __tablename__ = 'membro'
-    
-    id = Column(Integer, primary_key=True)
-    email = Column(String(100), unique=True, nullable=False)
-    nome = Column(String(50), nullable=False)
-    senha = Column(String(50), nullable=False)
-    
-    tarefas = relationship("Tarefa", back_populates="membro")
-    
-    def __init__(self, email, nome, senha):
-        self.email = email
-        self.nome = nome
-        self.senha = senha
+    __table_args__ = (
+        CheckConstraint('LENGTH(nome) >= 5', name='nome_min_length'),
+        CheckConstraint('LENGTH(senha) >= 3', name='senha_min_length'),
+    )
 
-class Tarefa(Base):
-    __tablename__ = 'tarefa'
+class Tarefa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(50), nullable=False)
+    descricao = db.Column(db.String(140))
+    finalizada = db.Column(db.Boolean, default=False, nullable=False)
+    data_termino = db.Column(db.DateTime)
+    prioridade = db.Column(db.Enum('Baixa', 'Média', 'Alta'), default='Baixa', nullable=False)
+    id_membro = db.Column(db.Integer, db.ForeignKey('membro.id'), nullable=False)
+    membro = db.relationship('Membro', backref=db.backref('tarefas', lazy=True))
 
-    id = Column(Integer, primary_key=True)
-    nome = Column(String(50), nullable=False)
-    descricao = Column(String(140))
-    finalizada = Column(Boolean, nullable=False, default=False)
-    data_termino = Column(DateTime)
-    prioridade = Column(String(10), nullable=False, default='Baixa')
-    id_membro = Column(Integer, ForeignKey("membro.id"))
-
-    membro = relationship("Membro", back_populates="tarefas")
-
-    def __init__(self, nome, descricao, prioridade='Baixa'):
-        self.nome = nome
-        self.descricao = descricao
-        self.prioridade = prioridade
-
-    def finalizar(self):
-        self.finalizada = True
-        self.data_termino = datetime.now()
+    __table_args__ = (
+        CheckConstraint('LENGTH(nome) >= 5', name='nome_min_length'),
+        CheckConstraint('LENGTH(nome) <= 50', name='nome_max_length'),
+        CheckConstraint('LENGTH(descricao) <= 140', name='descricao_max_length'),
+    )

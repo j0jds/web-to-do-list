@@ -8,10 +8,14 @@ CREATE TABLE Membro (
 CREATE TABLE Tarefa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
-    descricao VARCHAR(140),
+    descricao VARCHAR(140),	
     finalizada BOOLEAN NOT NULL DEFAULT FALSE,
     data_termino DATETIME,
-    prioridade ENUM('Baixa', 'Média', 'Alta') NOT NULL DEFAULT 'Baixa'
+    prioridade ENUM('Baixa', 'Média', 'Alta') NOT NULL DEFAULT 'Baixa',
+    id_membro INT,
+    CONSTRAINT fk_tarefa_membro_id FOREIGN KEY (id_membro) REFERENCES Membro (id)
 );
+
+
 
 
